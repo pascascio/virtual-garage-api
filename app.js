@@ -3,7 +3,7 @@ require('express-async-errors');
 
 //extra security packages
 const helmet = require('helmet')
-const  cors = require('cors')
+const cors = require('cors')
 const xss = require('xss-clean')
 const rateLimiter = require('express-rate-limit')
 
@@ -20,7 +20,7 @@ const authenticateUser = require('./middleware/authentication');
 
 //routers 
 const authRouter = require('./routes/auth');
-const jobsRouter = require('./routes/jobs');
+const carsRouter = require('./routes/cars');
 
 
 // error handler
@@ -40,12 +40,12 @@ app.use(cors());
 app.use(xss());
 
 app.get('/', (req, res) => {
-  res.send('jobs api')
+  res.send('cars api')
 })
 
 // routes
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/jobs',authenticateUser,  jobsRouter);
+app.use('/api/v1/cars',authenticateUser,  carsRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
