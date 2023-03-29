@@ -65,7 +65,7 @@ const deleteCar = async (req, res) => {
     if(!car){
         throw new NotFoundError(`No car with this id ${carId}`)
     }
-    res.status(StatusCodes.OK).send()
+    res.status(StatusCodes.OK).json({msg: "The entry was deleted"})
 }
 
 module.exports ={
