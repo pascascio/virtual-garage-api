@@ -23,12 +23,11 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Please provide password'],
     minlength: 6,
   },
-  /*number: {
+  number: {
     type: String, 
-    required: [true, 'Please provide number'], 
     minlength:10,
     maxlength:10,
-  },*/
+  },
 })
 
 UserSchema.pre('save', async function () {

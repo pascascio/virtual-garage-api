@@ -31,6 +31,9 @@ const CarSchema = new mongoose.Schema(
       required: [true, 'Please provide repair concerns'],
 
     },
+    technicianComments: {
+      type: String, 
+    },
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: 'User',

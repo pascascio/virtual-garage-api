@@ -38,14 +38,14 @@ async function buildCarsTable(carsTable, carsTableHeader, token, message) {
 document.addEventListener("DOMContentLoaded", () => {
   const logoff = document.getElementById("logoff");
   const message = document.getElementById("message");
-  const logonRegister = document.getElementById("logon-register");
-  const logon = document.getElementById("logon");
-  const register = document.getElementById("register");
-  const logonDiv = document.getElementById("logon-div");
+  const dashboard = document.getElementById("dashbaord");
+  const loginRegister = document.getElementById("register-div");
+  const login = document.getElementById("login-div");
+  const loginDiv = document.getElementById("login-div");
   const email = document.getElementById("email");
   const password = document.getElementById("password");
-  const logonButton = document.getElementById("logon-button");
-  const logonCancel = document.getElementById("logon-cancel");
+  const loginButton = document.getElementById("login-button");
+  const loginCancel = document.getElementById("login-cancel");
   const registerDiv = document.getElementById("register-div");
   const name = document.getElementById("name");
   const email1 = document.getElementById("email1");
@@ -69,13 +69,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // section 2 
 
-  let showing = logonRegister;
+  let showing = loginRegister;
   let token = null;
   document.addEventListener("startDisplay", async () => {
-    showing = logonRegister;
+    showing = loginRegister;
     token = localStorage.getItem("token");
     if (token) {
       //if the user is logged in
+      dashboard.style.display = "block";
       logoff.style.display = "block";
       const count = await buildCarsTable(
         carsTable,
@@ -93,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cars.style.display = "block";
       showing = cars;
     } else {
-      logonRegister.style.display = "block";
+      loginRegister.style.display = "block";
     }
   });
 
@@ -108,35 +109,35 @@ document.addEventListener("DOMContentLoaded", () => {
       return; // we don't want to act on buttons while doing async operations
     }
     if (e.target.nodeName === "BUTTON") {
-      message.textContent = "";
+      message.textContent = " ";
     }
     if (e.target === logoff) {
       localStorage.removeItem("token");
       token = null;
       showing.style.display = "none";
-      logonRegister.style.display = "block";
-      showing = logonRegister;
+      loginRegister.style.display = "block";
+      showing = loginRegister;
       carsTable.replaceChildren(carsTableHeader); // don't want other users to see
       message.textContent = "You are logged off.";
-    } else if (e.target === logon) {
+    } else if (e.target === login) {
       showing.style.display = "none";
-      logonDiv.style.display = "block";
-      showing = logonDiv;
-    } else if (e.target === register) {
+      loginDiv.style.display = "block";
+      showing = loginDiv;
+    } else if (e.target === registerButton) {
       showing.style.display = "none";
       registerDiv.style.display = "block";
       showing = registerDiv;
-    } else if (e.target === logonCancel || e.target == registerCancel) {
+    } else if (e.target === loginCancel || e.target == registerCancel) {
       showing.style.display = "none";
-      logonRegister.style.display = "block";
-      showing = logonRegister;
+      loginRegister.style.display = "block";
+      showing = loginRegister;
       email.value = "";
       password.value = "";
       name.value = "";
       email1.value = "";
       password1.value = "";
       password2.value = "";
-    } else if (e.target === logonButton) {
+    } else if (e.target === loginButton) {
       suspendInput = true;
       try {
         const response = await fetch("/api/v1/auth/login", {
@@ -151,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const data = await response.json();
         if (response.status === 200) {
-          message.textContent = `Logon successful.  Welcome ${data.user.name}`;
+          message.textContent = `Login successful.  Welcome ${data.user.name}`;
           token = data.token;
           localStorage.setItem("token", token);
           showing.style.display = "none";

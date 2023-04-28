@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cars</title>
+</head>
+
+<body>
+    <div id = "dashboard">
+    <div class="topnav">
+        <a class="active" href="index.html">Home</a>
+        <a href="dashboard.html">Add Car</a>
+        <a href="index.html">Register</a>
+        <a href="login.html">Login</a>
+      </div>  
+
+      </div>   <h1>Cars List</h1>
+      <button type="button" id="logoff">logoff</button>
+    <hr>
+    <p id="message"></p>
+    <hr>
+      <div id="cars" style="display:none;">
+          <p id="cars-message"></p>
+          <table id="cars-table" style="display:none;">
+              <tr id="cars-table-header">
+                  <th>Year</th>
+                  <th>Make</th>
+                  <th>Model</th>
+                  <th>Repair Concern</th>
+                  <th>Status</th>
+                  <th colspan="2"></th>
+              </tr>
+          </table>
+          <button type="button" id="add-car">add car</button>
+      </div>
+      <div id="edit-car" style="display:none;">
+          <form>
+              <div>
+                  <label for="year">Year:</label>
+                  <input type="text" id="year">
+              </div>
+              <div>
+                  <label for="make">Make:</label>
+                  <input type="text" id="make">
+              </div>
+              <div>
+                  <label for="model">Model:</label>
+                  <input type="text" id="model">
+              </div>
+              <div>
+                  <label for="repair-concerns">Repair Concerns:</label>
+                  <div>
+                  <textarea id = "repair-concerns"  name="repair-concerns" ></textarea>
+                  </div>
+              </div>
+              <div>
+                  <label for="status">status:</label>
+                  <select id="status">
+                      <option value="pending">pending</option>
+                      <option value="review in progress">review in progress</option>
+                      <option value="awaiting customer approval">awaiting customer approval</option>
+                      <option value="repair complete">repair complete</option>
+                  </select>
+              </div>
+              <button type="button" id="adding-car">add</button>
+              <button type="button" id="deleting-car">delete</button>
+              <button type="button" id="edit-cancel">cancel</button>
+          </form>
+      </div>
+    </div>
+      <script src="./cars.js"></script>
+
+  </body>
+</html>
