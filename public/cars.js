@@ -36,7 +36,7 @@ async function buildCarsTable(carsTable, carsTableHeader, token, message) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const logoff = document.getElementById("logoff");
+  const logoffButton = document.getElementById("logoff");
   const message = document.getElementById("message");
   const dashboard = document.getElementById("dashbaord");
   const loginRegister = document.getElementById("register-div");
@@ -105,11 +105,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // section 3
 
   document.addEventListener("click", async (e) => {
+    //console.log(e.target.innerHTML)
     if (suspendInput) {
       return; // we don't want to act on buttons while doing async operations
     }
     if (e.target.nodeName === "BUTTON") {
-      message.textContent = " ";
+      message.textContent = "";
     }
     if (e.target === logoff) {
       localStorage.removeItem("token");
@@ -119,14 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
       showing = loginRegister;
       carsTable.replaceChildren(carsTableHeader); // don't want other users to see
       message.textContent = "You are logged off.";
-    } else if (e.target === login) {
+    } else if (e.target === loginButton) {
+      showing.style.display = "none";
+      dashboard.style.display = "block";
+      showing = dashboard;
+    } else if (e.target === registerButton) {
       showing.style.display = "none";
       loginDiv.style.display = "block";
       showing = loginDiv;
-    } else if (e.target === registerButton) {
-      showing.style.display = "none";
-      registerDiv.style.display = "block";
-      showing = registerDiv;
     } else if (e.target === loginCancel || e.target == registerCancel) {
       showing.style.display = "none";
       loginRegister.style.display = "block";
