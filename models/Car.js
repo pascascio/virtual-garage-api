@@ -26,11 +26,6 @@ const CarSchema = new mongoose.Schema(
       enum: ['pending', 'review in progress', 'awaiting customer approval', 'repair complete'],
       default: 'pending',
     },
-    repairConcerns: {
-      type: String, 
-      required: [true, 'Please provide repair concerns'],
-
-    },
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
