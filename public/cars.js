@@ -1,3 +1,5 @@
+
+
 async function buildCarsTable(carsTable, carsTableHeader, token, message) {
   try {
     const response = await fetch("/api/v1/cars", {
@@ -17,7 +19,7 @@ async function buildCarsTable(carsTable, carsTableHeader, token, message) {
         for (let i = 0; i < data.cars.length; i++) {
           let editButton = `<td><button type="button" class="editButton" data-id=${data.cars[i]._id}>edit</button></td>`;
           let deleteButton = `<td><button type="button" class="deleteButton" data-id=${data.cars[i]._id}>delete</button></td>`;
-          let rowHTML = `<td>${data.cars[i].year}</td><td>${data.cars[i].make}</td><td>${data.cars[i].model}</td><td>${data.cars[i].repairConcerns}<td>${data.cars[i].status}</td>${editButton}${deleteButton}`;
+          let rowHTML = `<td>${data.cars[i].year}</td><td>${data.cars[i].make}</td><td>${data.cars[i].model}</td><td>${data.cars[i].status}</td>${editButton}${deleteButton}`;
           let rowEntry = document.createElement("tr");
           rowEntry.innerHTML = rowHTML;
           children.push(rowEntry);
@@ -61,7 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const year = document.getElementById("year");
   const make = document.getElementById("make");
   const model = document.getElementById("model")
-  const repairConcerns = document.getElementById("repair-concerns");
   const status = document.getElementById("status");
   const addingCar = document.getElementById("adding-car");
   const carsMessage = document.getElementById("cars-message");
@@ -214,7 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
       year.value = "";
       make.value = "";
       model.value = "";
-      repairConcerns.value = "";
       status.value = "pending";
       addingCar.textContent = "add";
     } else if (e.target === editCancel) {
@@ -222,7 +222,6 @@ document.addEventListener("DOMContentLoaded", () => {
       year.value = "";
       make.value = "";
       model.value = "";
-      repairConcerns.value = "";
       status.value = "pending";
       thisEvent = new Event("startDisplay");
       document.dispatchEvent(thisEvent);
@@ -242,7 +241,6 @@ document.addEventListener("DOMContentLoaded", () => {
               year: year.value, 
               make: make.value, 
               model: model.value, 
-              repairConcerns: repairConcerns.value, 
               status: status.value,
             }),
           });
@@ -256,7 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
             year.value = "";
             make.value = "";
             model.value = "";
-            repairConcerns.value = "";
             status.value = "pending";
           } else {
             // failure
@@ -281,8 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
              year: year.value, 
              make: make.value, 
              model: model.value, 
-             repairConcerns: repairConcerns.value,
-             status: status.value,
+              status: status.value,
             }),
           });
           const data = await response.json();
@@ -292,7 +288,6 @@ document.addEventListener("DOMContentLoaded", () => {
             year.value = "";
             make.value = "";
             model.value = "";
-            repairConcerns.value = "";
             status.value = "pending";
             thisEvent = new Event("startDisplay");
             document.dispatchEvent(thisEvent);
@@ -322,7 +317,6 @@ document.addEventListener("DOMContentLoaded", () => {
           year.value = data.car.year;
           make.value = data.car.make;
           model.value = data.car.model;
-          repairConcerns.value = data.car.repairConcerns;
           status.value = data.car.status;
           showing.style.display = "none";
           showing = editCar;
@@ -355,13 +349,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const data = await response.json();
         if (response.status === 200) {
-         console.log(data.msg)
+          year.value = data.car.year;
+          make.value = data.car.make;
+          model.value = data.car.model;
+          status.value = data.car.status;
+          showing.style.display = "none";
+          showing = editCar;
+          showing.style.display = "block";
+          addingCar.textContent = "delete";
           message.textContent = "car deleted";
-          thisEvent = new Event("startDisplay");
-          document.dispatchEvent(thisEvent);
         } else {
           // might happen if the list has been updated since last display
           message.textContent = "The cars entry was not found";
+          thisEvent = new Event("startDisplay");
+          document.dispatchEvent(thisEvent);
         }
       } catch (err) {
         console.log(err)
