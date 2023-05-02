@@ -1,15 +1,30 @@
 
 
-async function buildCarsTable(carsTable, carsTableHeader, token, message) {
+async function buildCarsTable(carsTable, carsTableHeader, token, role, message) {
+  console.log("in build table")
   try {
-    const response = await fetch("/api/v1/cars", {
+    const response = "";
+    if (role === "admin"){
+      console.log("inside admin role")
+       response = await fetch("/api/v1/admin", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } else {
+      console.log("inside client role")
+     response = await fetch("/api/v1/cars", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
+  }
     const data = await response.json();
+    console.log("data", data)
     var children = [carsTableHeader];
     if (response.status === 200) {
       if (data.count === 0) {
@@ -32,6 +47,7 @@ async function buildCarsTable(carsTable, carsTableHeader, token, message) {
       return 0;
     }
   } catch (err) {
+    console.log(err)
     message.textContent = "A communication error occurred.";
     return 0;
   }
@@ -82,17 +98,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let showing = registerDiv;
   let token = null;
+  let role = null;
   document.addEventListener("startDisplay", async () => {
     showing = registerDiv;
     token = localStorage.getItem("token");
-    if (token) {
+    role = localStorage.getItem("role");
+    if (token && role) {
       //if the user is logged in
       logoff.style.display = "block";
-
+      console.log("before count")
       const count = await buildCarsTable(
         carsTable,
         carsTableHeader,
         token,
+        role,
         message
       );
       if (count > 0) {
@@ -124,7 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (e.target === logoff) {
       localStorage.removeItem("token");
+      localStorage.removeItem("role");
       token = null;
+      role = null;
       showing.style.display = "none";
       registerDiv.style.display = "block";
       showing = registerDiv;
@@ -164,10 +185,13 @@ document.addEventListener("DOMContentLoaded", () => {
           }),
         });
         const data = await response.json();
+        console.log("logindata", data)
         if (response.status === 200) {
           message.textContent = `Logon successful.  Welcome ${data.user.name}`;
           token = data.token;
+          role = data.user.role;
           localStorage.setItem("token", token);
+          localStorage.setItem("role", role);
           showing.style.display = "none";
           thisEvent = new Event("startDisplay");
           email.value = "";
@@ -177,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
           message.textContent = data.msg;
         }
       } catch (err) {
+        console.log("loginerror", err)
         message.textContent = "A communications error occurred.";
       }
       suspendInput = false;
