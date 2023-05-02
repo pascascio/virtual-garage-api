@@ -19,7 +19,7 @@ async function buildCarsTable(carsTable, carsTableHeader, token, message) {
         for (let i = 0; i < data.cars.length; i++) {
           let editButton = `<td><button type="button" class="editButton" data-id=${data.cars[i]._id}>edit</button></td>`;
           let deleteButton = `<td><button type="button" class="deleteButton" data-id=${data.cars[i]._id}>delete</button></td>`;
-          let rowHTML = `<td>${data.cars[i].year}</td><td>${data.cars[i].make}</td><td>${data.cars[i].model}</td><td>${data.cars[i].status}</td>${editButton}${deleteButton}`;
+          let rowHTML = `${data.cars[i].year}</td><td>${data.cars[i].make}</td><td>${data.cars[i].model}</td><td>${data.cars[i].repairConcerns}<td>${data.cars[i].status}</td>${editButton}${deleteButton}`;
           let rowEntry = document.createElement("tr");
           rowEntry.innerHTML = rowHTML;
           children.push(rowEntry);
@@ -37,17 +37,18 @@ async function buildCarsTable(carsTable, carsTableHeader, token, message) {
   }
 }
 
+
+
 document.addEventListener("DOMContentLoaded", () => {
-  const logoffButton = document.getElementById("logoff");
+  const logoff = document.getElementById("logoff");
   const message = document.getElementById("message");
-  const dashboard = document.getElementById("dashbaord");
-  const loginRegister = document.getElementById("register-div");
-  const login = document.getElementById("login-div");
-  const loginDiv = document.getElementById("login-div");
+  const logon = document.getElementById("logon");
+  const register = document.getElementById("register");
+  const logonDiv = document.getElementById("logon-div");
   const email = document.getElementById("email");
   const password = document.getElementById("password");
-  const loginButton = document.getElementById("login-button");
-  const loginCancel = document.getElementById("login-cancel");
+  const logonButton = document.getElementById("logon-button");
+  const logonCancel = document.getElementById("logon-cancel");
   const registerDiv = document.getElementById("register-div");
   const name = document.getElementById("name");
   const email1 = document.getElementById("email1");
@@ -65,20 +66,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const model = document.getElementById("model")
   const status = document.getElementById("status");
   const addingCar = document.getElementById("adding-car");
+  const repairConcerns = document.getElementById("repair-concerns");
   const carsMessage = document.getElementById("cars-message");
   const editCancel = document.getElementById("edit-cancel");
+  const adminCars = document.getElementById("admin-cars");
+  const techComments = document.getElementById("tech-comments");
+  const adminCarsMessage = document.getElementById("admin-cars-message");
+  const adminTable = document.getElementById("admin-cars-table");
+  const adminCarsTableHeader= document.getElementById("admin-cars-table-header");
+  const adminAddingCar = document.getElementById("admin-adding-car");
 
+
+ 
   // section 2 
 
-  let showing = loginRegister;
+  let showing = registerDiv;
   let token = null;
   document.addEventListener("startDisplay", async () => {
-    showing = loginRegister;
+    showing = registerDiv;
     token = localStorage.getItem("token");
     if (token) {
       //if the user is logged in
-      dashboard.style.display = "block";
       logoff.style.display = "block";
+
       const count = await buildCarsTable(
         carsTable,
         carsTableHeader,
@@ -95,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cars.style.display = "block";
       showing = cars;
     } else {
-      loginRegister.style.display = "block";
+      registerDiv.style.display = "block";
     }
   });
 
@@ -106,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // section 3
 
   document.addEventListener("click", async (e) => {
-    //console.log(e.target.innerHTML)
     if (suspendInput) {
       return; // we don't want to act on buttons while doing async operations
     }
@@ -117,29 +126,31 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.removeItem("token");
       token = null;
       showing.style.display = "none";
-      loginRegister.style.display = "block";
-      showing = loginRegister;
+      registerDiv.style.display = "block";
+      showing = registerDiv;
       carsTable.replaceChildren(carsTableHeader); // don't want other users to see
       message.textContent = "You are logged off.";
-    } else if (e.target === loginButton) {
+      logoff.style.display = "none"
+    } else if (e.target === logon) {
       showing.style.display = "none";
-      dashboard.style.display = "block";
-      showing = dashboard;
-    } else if (e.target === registerButton) {
+      logonDiv.style.display = "block";
+      showing = logonDiv;
+    } 
+    else if (e.target === register) {
       showing.style.display = "none";
-      loginDiv.style.display = "block";
-      showing = loginDiv;
-    } else if (e.target === loginCancel || e.target == registerCancel) {
+      registerDiv.style.display = "block";
+      showing = registerDiv;
+    } else if (e.target === logonCancel || e.target == registerCancel) {
       showing.style.display = "none";
-      loginRegister.style.display = "block";
-      showing = loginRegister;
+      registerDiv.style.display = "block";
+      showing = registerDiv;
       email.value = "";
       password.value = "";
       name.value = "";
       email1.value = "";
       password1.value = "";
       password2.value = "";
-    } else if (e.target === loginButton) {
+    } else if (e.target === logonButton) {
       suspendInput = true;
       try {
         const response = await fetch("/api/v1/auth/login", {
@@ -154,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const data = await response.json();
         if (response.status === 200) {
-          message.textContent = `Login successful.  Welcome ${data.user.name}`;
+          message.textContent = `Logon successful.  Welcome ${data.user.name}`;
           token = data.token;
           localStorage.setItem("token", token);
           showing.style.display = "none";
@@ -215,6 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
       year.value = "";
       make.value = "";
       model.value = "";
+      repairConcerns.value = "";
       status.value = "pending";
       addingCar.textContent = "add";
     } else if (e.target === editCancel) {
@@ -222,6 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
       year.value = "";
       make.value = "";
       model.value = "";
+      repairConcerns.value = "";
       status.value = "pending";
       thisEvent = new Event("startDisplay");
       document.dispatchEvent(thisEvent);
@@ -241,6 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
               year: year.value, 
               make: make.value, 
               model: model.value, 
+              repairConcerns: repairConcerns.value, 
               status: status.value,
             }),
           });
@@ -254,6 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
             year.value = "";
             make.value = "";
             model.value = "";
+            repairConcerns.value = "";
             status.value = "pending";
           } else {
             // failure
@@ -278,6 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
              year: year.value, 
              make: make.value, 
              model: model.value, 
+             repairConcerns: repairConcerns.value,
               status: status.value,
             }),
           });
@@ -288,6 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
             year.value = "";
             make.value = "";
             model.value = "";
+            repairConcerns.value = "";
             status.value = "pending";
             thisEvent = new Event("startDisplay");
             document.dispatchEvent(thisEvent);
@@ -317,6 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
           year.value = data.car.year;
           make.value = data.car.make;
           model.value = data.car.model;
+          repairConcerns.value = data.car.repairConcerns;
           status.value = data.car.status;
           showing.style.display = "none";
           showing = editCar;
@@ -349,20 +367,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const data = await response.json();
         if (response.status === 200) {
-          year.value = data.car.year;
-          make.value = data.car.make;
-          model.value = data.car.model;
-          status.value = data.car.status;
-          showing.style.display = "none";
-          showing = editCar;
-          showing.style.display = "block";
-          addingCar.textContent = "delete";
           message.textContent = "car deleted";
-        } else {
-          // might happen if the list has been updated since last display
-          message.textContent = "The cars entry was not found";
           thisEvent = new Event("startDisplay");
           document.dispatchEvent(thisEvent);
+        } else {
+          // might happen if the list has been updated since last display
+          message.textContent = "The cars entry was not found"
         }
       } catch (err) {
         console.log(err)

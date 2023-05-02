@@ -1,6 +1,7 @@
 require('dotenv').config();
 require('express-async-errors');
 
+
 //extra security packages
 const helmet = require('helmet')
 const cors = require('cors')
@@ -16,11 +17,14 @@ const app = express();
 const connectDB = require('./db/connect')
 
 const authenticateUser = require('./middleware/authentication');
+const authenticateRole = require('./middleware/check-role');
+
 
 
 //routers 
 const authRouter = require('./routes/auth');
 const carsRouter = require('./routes/cars');
+const adminRouter = require('./routes/admin');
 
 
 // error handler
@@ -49,6 +53,7 @@ app.use(express.static('public'))
 // routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/cars',authenticateUser,  carsRouter);
+app.use('/api/v1/admin', authenticateUser, authenticateRole, adminRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

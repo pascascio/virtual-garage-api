@@ -1,10 +1,12 @@
 const Car = require('../models/Car')
+
+
 const { StatusCodes } = require('http-status-codes')
 const {BadRequestError, NotFoundError} = require('../errors')
 
 
 const getAllCars = async (req, res) => {
-    const cars = await Car.find({createdBy: req.user.userId}).sort('createdAt')
+    const cars = await Car.find().sort('createdAt')
     res.status(StatusCodes.OK).json({cars, count:cars.length})
 }
 

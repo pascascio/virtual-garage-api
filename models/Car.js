@@ -2,10 +2,6 @@ const mongoose = require('mongoose')
 
 const CarSchema = new mongoose.Schema(
   {
-    vinnum:{
-      type:String, 
-      minlength: 17,
-    },
     year:{
       type:String, 
       required: [true, 'Please provide year of the car']
@@ -25,12 +21,20 @@ const CarSchema = new mongoose.Schema(
       type: String,
       enum: ['pending', 'review in progress', 'awaiting customer approval', 'repair complete'],
       default: 'pending',
+    },  
+    repairConcerns: {
+      type: String, 
+      required: [true, 'Please provide repair concerns'],
+
     },
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
       required: [true, 'Please provide user'],
     },
+    date_added: 
+    {type: Date, 
+      default: Date.now},
   },
   { timestamps: true }
 )
