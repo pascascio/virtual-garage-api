@@ -1,0 +1,35 @@
+body {
+    background-color: cornsilk;
+}
+
+h1{
+    font-variant: small-caps;
+    color: firebrick;
+    margin-bottom: 1rem;
+    font-weight:800;
+    font-size:30px;
+}
+
+#name, #email1, #password1, #password2, #email, #password{
+    padding:5px;
+    margin: 5px 0px 5px 20px;
+}
+
+#cars th {
+    color: firebrick;
+}
+
+#cars {
+    border: inset;
+    padding: 5px;
+}
+
+
+button{
+    border-radius: 10px 10px 10px 10px;
+    padding: 10px;
+    background-color:  firebrick;
+    color: cornsilk;
+    font-variant: small-caps;
+}
+

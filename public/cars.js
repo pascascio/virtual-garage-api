@@ -3,9 +3,8 @@
 async function buildCarsTable(carsTable, carsTableHeader, token, role, message) {
   console.log("in build table")
   try {
-    const response = "";
+    let response = "";
     if (role === "admin"){
-      console.log("inside admin role")
        response = await fetch("/api/v1/admin", {
         method: "GET",
         headers: {
@@ -14,7 +13,6 @@ async function buildCarsTable(carsTable, carsTableHeader, token, role, message) 
         },
       });
     } else {
-      console.log("inside client role")
      response = await fetch("/api/v1/cars", {
       method: "GET",
       headers: {
@@ -24,7 +22,6 @@ async function buildCarsTable(carsTable, carsTableHeader, token, role, message) 
     });
   }
     const data = await response.json();
-    console.log("data", data)
     var children = [carsTableHeader];
     if (response.status === 200) {
       if (data.count === 0) {
@@ -85,12 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const repairConcerns = document.getElementById("repair-concerns");
   const carsMessage = document.getElementById("cars-message");
   const editCancel = document.getElementById("edit-cancel");
-  const adminCars = document.getElementById("admin-cars");
-  const techComments = document.getElementById("tech-comments");
-  const adminCarsMessage = document.getElementById("admin-cars-message");
-  const adminTable = document.getElementById("admin-cars-table");
-  const adminCarsTableHeader= document.getElementById("admin-cars-table-header");
-  const adminAddingCar = document.getElementById("admin-adding-car");
+  
 
 
  
@@ -185,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }),
         });
         const data = await response.json();
-        console.log("logindata", data)
         if (response.status === 200) {
           message.textContent = `Logon successful.  Welcome ${data.user.name}`;
           token = data.token;
@@ -201,7 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
           message.textContent = data.msg;
         }
       } catch (err) {
-        console.log("loginerror", err)
         message.textContent = "A communications error occurred.";
       }
       suspendInput = false;
@@ -243,7 +233,9 @@ document.addEventListener("DOMContentLoaded", () => {
         suspendInput = false;
       }
     } // section 4
+
     else if (e.target === addCar) {
+      console.log("in add car")
       showing.style.display = "none";
       editCar.style.display = "block";
       showing = editCar;
@@ -269,20 +261,20 @@ document.addEventListener("DOMContentLoaded", () => {
         // this is an attempted add
         suspendInput = true;
         try {
-          const response = await fetch("/api/v1/cars", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              year: year.value, 
-              make: make.value, 
-              model: model.value, 
-              repairConcerns: repairConcerns.value, 
-              status: status.value,
-            }),
-          });
+            const response = await fetch("/api/v1/cars", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                year: year.value, 
+                make: make.value, 
+                model: model.value, 
+                repairConcerns: repairConcerns.value, 
+                status: status.value,
+              }),
+            });
           const data = await response.json();
           if (response.status === 201) {
             //successful create
@@ -300,6 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
             message.textContent = data.msg;
           }
         } catch (err) {
+          console.log(err)
           message.textContent = "A communication error occurred.";
         }
         suspendInput = false;
@@ -307,21 +300,42 @@ document.addEventListener("DOMContentLoaded", () => {
         // this is an update
         suspendInput = true;
         try {
+         
           const carID = editCar.dataset.id;
-          const response = await fetch(`/api/v1/cars/${carID}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-             year: year.value, 
-             make: make.value, 
-             model: model.value, 
-             repairConcerns: repairConcerns.value,
-              status: status.value,
-            }),
-          });
+          let response = ""; 
+          if(role === "admin"){
+            response = await fetch(`/api/v1/admin/${carID}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+               year: year.value, 
+               make: make.value, 
+               model: model.value, 
+               repairConcerns: repairConcerns.value,
+                status: status.value,
+              }),
+            });
+
+          } else {
+            response = await fetch(`/api/v1/cars/${carID}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+               year: year.value, 
+               make: make.value, 
+               model: model.value, 
+               repairConcerns: repairConcerns.value,
+                status: status.value,
+              }),
+            });
+
+          }
           const data = await response.json();
           if (response.status === 200) {
             message.textContent = "The entry was updated.";
@@ -337,7 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
             message.textContent = data.msg;
           }
         } catch (err) {
-
+          console.log(err)
           message.textContent = "A communication error occurred.";
         }
       }
@@ -347,13 +361,26 @@ document.addEventListener("DOMContentLoaded", () => {
       editCar.dataset.id = e.target.dataset.id;
       suspendInput = true;
       try {
-        const response = await fetch(`/api/v1/cars/${e.target.dataset.id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+          let response = "";
+          if(role === "admin") {
+            response = await fetch(`/api/v1/admin/${e.target.dataset.id}`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+          } else {
+            response = await fetch(`/api/v1/cars/${e.target.dataset.id}`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+          }
         const data = await response.json();
         if (response.status === 200) {
           year.value = data.car.year;
@@ -383,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
       editCar.dataset.id = e.target.dataset.id;
       suspendInput = true;
       try {
-        const response = await fetch(`/api/v1/cars/${e.target.dataset.id}`, {
+           response = await fetch(`/api/v1/cars/${e.target.dataset.id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -406,12 +433,5 @@ document.addEventListener("DOMContentLoaded", () => {
       suspendInput = false;
     }
 
-//fixing delete button
-
-
-
-
-
-
   })
-}); // fin
+}); 

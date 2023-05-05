@@ -18,7 +18,6 @@ const getCar = async (req, res) => {
 
     const car = await Car.findOne({
         _id:carId, 
-        createdBy: userId
     })
     if(!car){
         throw new NotFoundError(`No car with id ${carId}`)
