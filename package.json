@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"  // Use node instead of nodemon for production on Render
+    "start": "node app.js"
   },
   "author": "",
   "license": "ISC",
