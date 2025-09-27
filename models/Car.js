@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const CarSchema = new mongoose.Schema(
   {
     year:{
-      type:String, 
+      type:Number, 
       required: [true, 'Please provide year of the car']
     },
     
@@ -16,16 +16,24 @@ const CarSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide model of the car'],
       maxlength: 100,
+    }, 
+    license: {
+      type: String,
+      required: [true, 'Please provide the car license number'], 
+      maxlength: 20, // 
     },
     status: {
       type: String,
-      enum: ['pending', 'review in progress', 'awaiting customer approval', 'repair complete'],
+      enum: ['pending','reviewing', 'in-progress', 'awaiting', 'repair-complete'],
       default: 'pending',
     },  
     repairConcerns: {
       type: String, 
       required: [true, 'Please provide repair concerns'],
 
+    },
+    technicianComments: {
+      type:String, 
     },
     createdBy: {
       type: mongoose.Types.ObjectId,

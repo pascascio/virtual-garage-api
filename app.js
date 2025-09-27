@@ -40,7 +40,12 @@ app.use(
   );
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',  // The URL of your frontend app
+  methods: ['GET', 'POST', 'PUT', 'PATCH','DELETE'], // Allowed methods
+  credentials: true, // Allow credentials if needed (e.g., cookies)
+}
+));
 app.use(xss());
 
 /*

@@ -6,7 +6,7 @@ const {BadRequestError, NotFoundError} = require('../errors')
 
 
 const getAllCars = async (req, res) => {
-    const cars = await Car.find().sort('createdAt')
+    const cars = await Car.find().sort('createdAt').populate({path: 'createdBy', select: 'name'})
     res.status(StatusCodes.OK).json({cars, count:cars.length})
 }
 
@@ -18,7 +18,7 @@ const getCar = async (req, res) => {
 
     const car = await Car.findOne({
         _id:carId, 
-    })
+    }).populate({path: 'createdBy', select: 'name'})
     if(!car){
         throw new NotFoundError(`No car with id ${carId}`)
     }
@@ -59,9 +59,9 @@ const deleteCar = async (req, res) => {
         params:{id:carId},
     } = req
 
-    const car = await Car.findByIdAndRemove({
+    const car = await Car.findOneAndDelete({
         _id: carId,
-        createdBy:userId
+        createdBy:userId,
     })
     if(!car){
         throw new NotFoundError(`No car with this id ${carId}`)

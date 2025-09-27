@@ -4,7 +4,7 @@ const {BadRequestError, NotFoundError} = require('../errors')
 
 
 const getAllCars = async (req, res) => {
-    const cars = await Car.find({createdBy: req.user.userId}).sort('createdAt')
+    const cars = await Car.find({createdBy: req.user.userId}).sort('createdAt').populate('createdBy', 'name')
     res.status(StatusCodes.OK).json({cars, count:cars.length})
 }
 
@@ -17,7 +17,7 @@ const getCar = async (req, res) => {
     const car = await Car.findOne({
         _id:carId, 
         createdBy: userId
-    })
+    }).populate('createdBy', 'name')
     if(!car){
         throw new NotFoundError(`No car with id ${carId}`)
     }
@@ -31,25 +31,25 @@ const createCar = async (req, res) => {
 }
 
 const updateCar = async (req, res) => {
-    const {
-        body: {make, model, year, license},
-        user:{userId},  
-        params:{id:carId},
-    } = req
-
-    if(make === '' || model === '' || year === '' || license === ''){
-        throw new BadRequestError(`Car information cannot be empty`)
+    const { body: updatedFields, user: { userId }, params: { id: carId } } = req;
+  
+    if (!updatedFields || Object.keys(updatedFields).length === 0) {
+      throw new BadRequestError("No fields provided for update");
     }
-
-    const car = await Car.findByIdAndUpdate({_id:carId, createdBy:userId}, req.body, {new:true, 
-    runValidators: true})
-
-    if(!car){
-        throw new NotFoundError(`No car with id ${carId}`)
+  
+    const car = await Car.findOneAndUpdate(
+      { _id: carId, createdBy: userId },
+      updatedFields,
+      { new: true, runValidators: true }
+    );
+  
+    if (!car) {
+      throw new NotFoundError(`No car with id ${carId}`);
     }
-    res.status(StatusCodes.OK).json({car})
-   
-}
+  
+    res.status(StatusCodes.OK).json({ car });
+  };
+  
 
 
 const deleteCar = async (req, res) => {
@@ -58,7 +58,7 @@ const deleteCar = async (req, res) => {
         params:{id:carId},
     } = req
 
-    const car = await Car.findByIdAndRemove({
+    const car = await Car.findOneAndDelete({
         _id: carId,
         createdBy:userId
     })
