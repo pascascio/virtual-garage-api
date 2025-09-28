@@ -41,7 +41,7 @@ app.use(
 app.use(express.json());
 app.use(helmet());
 app.use(cors({
-  origin: 'http://localhost:5173',  // The URL of your frontend app
+  origin: ['http://localhost:5173', 'https://virtual-garage-front.vercel.app'],  // The URL of your frontend app
   methods: ['GET', 'POST', 'PUT', 'PATCH','DELETE'], // Allowed methods
   credentials: true, // Allow credentials if needed (e.g., cookies)
 }
